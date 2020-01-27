@@ -2,12 +2,11 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvFileSource;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
-
-import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -52,6 +51,51 @@ public class CartFormTest {
             assertEquals("Ваша заявка успешно отправлена! Наш менеджер свяжется с вами в ближайшее время.", successText.trim());
             Thread.sleep(1000);
 
+        }
+
+        @ParameterizedTest
+        @CsvFileSource(resources = "/nameErrorList.csv", numLinesToSkip = 1)
+        void cardFormLNameErrorTest(String name, String nameError) throws InterruptedException {
+
+            //  подаем непрриемлемое имя
+            driver.get("http://localhost:7777");
+            String title = driver.findElement(By.cssSelector(".heading_theme_alfa-on-white")).getText();
+
+            assertEquals("Заявка на дебетовую карту", title.trim());  //  Заголовок виден и правильно написан
+
+            driver.findElement(By.cssSelector("input.input__control[type=text]")).sendKeys(name);
+            driver.findElement(By.cssSelector("input.input__control[type=tel]")).sendKeys("+79991112233");
+            driver.findElement(By.cssSelector("form span.checkbox__box")).click();
+
+            driver.findElement(By.className("button__text")).click();
+
+            driver.findElement(By.cssSelector("div:nth-child(1) > span > span > span.input__sub")).isDisplayed();
+            String errorText = driver.findElement(By.cssSelector("div:nth-child(1) > span > span > span.input__sub")).getText();
+
+            assertEquals(nameError, errorText.trim());
+            Thread.sleep(1000);
+        }
+
+        @ParameterizedTest
+        @CsvFileSource(resources = "/phoneErrorList.csv", numLinesToSkip = 1)
+        void cardFormPhoneErrorTest(String phoneNumber, String phoneError) throws InterruptedException {
+            //  подаем неприемлемый телефонный номер
+            driver.get("http://localhost:7777");
+            String title = driver.findElement(By.cssSelector(".heading_theme_alfa-on-white")).getText();
+
+            assertEquals("Заявка на дебетовую карту", title.trim());  //  Заголовок виден и правильно написан
+
+            driver.findElement(By.cssSelector("input.input__control[type=text]")).sendKeys("Иванов Иван Иванович");
+            driver.findElement(By.cssSelector("input.input__control[type=tel]")).sendKeys(phoneNumber);
+            driver.findElement(By.cssSelector("form span.checkbox__box")).click();
+
+            driver.findElement(By.className("button__text")).click();
+
+            driver.findElement(By.cssSelector("div:nth-child(2) > span > span > span.input__sub")).isDisplayed();
+            String errorText = driver.findElement(By.cssSelector("div:nth-child(2) > span > span > span.input__sub")).getText();
+
+            assertEquals(phoneError, errorText.trim());
+            Thread.sleep(1000);
         }
     }
 }
