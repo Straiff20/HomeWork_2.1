@@ -8,7 +8,7 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class CardFormTest {
     static class Form {
@@ -16,7 +16,14 @@ public class CardFormTest {
 
         @BeforeAll
         static void setUpAll() {
-            System.setProperty("webdriver.chrome.driver", "Browser_plugins/chrome/chromedriver.exe");
+
+            if ((System.getProperty("os.name")).contains("mac")) {
+                System.setProperty("webdriver.chrome.driver", "Browser_plugins/chrome/mac/chromedriver";
+            } else if ((System.getProperty("os.name")).contains("linux")) {
+                System.setProperty("webdriver.chrome.driver", "Browser_plugins/chrome/linux/chromedriver";
+            } else {
+                System.setProperty("webdriver.chrome.driver", "Browser_plugins/chrome/windows/chromedriver.exe");
+            }
         }
 
         @BeforeEach
